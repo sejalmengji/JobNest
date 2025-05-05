@@ -19,41 +19,48 @@ export const clerkWebhooks = async (req,res) => {
         const payloadString = req.body.toString('utf8')
         const { data, type } = JSON.parse(payloadString)
 
+       
+
+
 
         // Switch Cases for different events - based on events it adds user to mongoDB, update user n delete user
         switch (type) {
-            
-            case 'user.created':{
+            case 'user.created': {
                 const userData = {
                     _id: data.id,
                     email: data.email_addresses[0].email_address,
                     name: data.first_name + " " + data.last_name,
                     resume: ''
                 }
-                // to save data in database
+                console.log('📥 Creating user:', userData)
                 await User.create(userData)
                 res.json({})
-                break;
+                console.log('✅ Success response sent for:', type)
+                break
             }
-
-            case 'user.updated':{
+        
+            case 'user.updated': {
                 const userData = {
                     email: data.email_addresses[0].email_address,
                     name: data.first_name + " " + data.last_name,
                 } 
+                console.log('✏️ Updating user:', userData)
                 await User.findByIdAndUpdate(data.id, userData)
                 res.json({})
-                break;
+                console.log('✅ Success response sent for:', type)
+                break
             }
-
-            case 'user.deleted':{
+        
+            case 'user.deleted': {
+                console.log('🗑️ Deleting user:', data.id)
                 await User.findByIdAndDelete(data.id)
                 res.json({})
-                break;
-            }        
-            
+                break
+            }
+        
             default:
-                break;
+                console.log('⚠️ Unhandled event type:', type)
+                break
         }
 
     } catch (error) {

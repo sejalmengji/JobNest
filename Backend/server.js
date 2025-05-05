@@ -14,13 +14,16 @@ await connectDB()
 
 //Middlewares
 app.use(cors())
-app.use(express.json())
 
 // Use raw body for the /webhooks route
 app.post('/webhooks',
     bodyParser.raw({ type: 'application/json' }),
     clerkWebhooks
   )
+
+// Json
+app.use(express.json())
+
 
 //Routes
 app.get('/',(req,res) => res.send("API Working"))

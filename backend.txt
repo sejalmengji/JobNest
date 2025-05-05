@@ -166,7 +166,7 @@ dashboard -> configure -> webhook -> add endpoints -> paste copied link () and a
 4) open .env file : 
 paste inside CLERK_WEBHOOK_SECRET = "whsec_l4LLA6f6sez7QbXkcbJZZPb34HZ1Zkyg"
 5) vercel.com : 
--> setting, env variables add CLERK_WEBHOOK_SECRET = "whsec_uJaZtic6O9em0TGru83jqF6k+XXnqeDL" and save
+-> setting, env variables add CLERK_WEBHOOK_SECRET = "whsec_l4LLA6f6sez7QbXkcbJZZPb34HZ1Zkyg" and save
 -> deplyoments -> ... -> create deplyoment -> select main -> create deplyoment 
 
 
