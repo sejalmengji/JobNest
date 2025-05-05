@@ -1,0 +1,95 @@
+1. Layout Utilities
+
+container	 			Centers and pads your page content.
+box-border / box-content		Controls box sizing model.
+block / inline-block / inline		Controls display type.
+flex / inline-flex			Makes a flexbox container.
+grid					Makes a grid container.
+hidden					Hides the element.
+
+
+2. Flexbox and Grid
+
+flex-row flex-col			Set flex direction.
+justify-start / center / between	Horizontal alignment.
+items-start / center / end		Vertical alignment.
+gap-4					Adds space between flex/grid children.
+
+
+3. Padding 
+
+p-0	padding
+px-0	padding-left and padding-right
+py-0	padding-top and padding-bottom
+ps-0	padding-inline-start
+pe-0	padding-inline-end
+pt-0	padding-top
+pr-0	padding-right
+
+
+4. Margin 
+
+(m, mx, my, ms, me, mt, mr)
+
+
+5. Sizing (Width & Height)
+
+w-64 h-32		Width and height.
+w-full / h-screen	Full width or height of screen.
+max-w-md		Maximum width.
+
+
+6. Typography
+
+font-bold / font-medium			Font weight.
+text-gray-500 / text-blue-600		Text color.
+uppercase / lowercase / capitalize	Text transformation.
+tracking-wide				Letter spacing.
+leading-loose				Line height.
+
+text-xl / text-2xl			Font size.
+sm - 640px  - small screen (sm:px-[5vw] -> inside classname of div)
+md - 768px  - medium screen
+lg - 1024px - large screen
+xl - 1280px
+2xl -1536px
+
+
+7. Background
+
+bg-blue-500		Background color.
+bg-gradient-to-r	Gradient background.
+bg-cover / bg-center	Background image size and position.
+
+
+
+8. Border and Radius
+
+border					Adds a border.
+border-2 				Border thickness.
+border-gray-300				Border color.
+rounded / rounded-lg / rounded-full	Border radius (round corners).
+
+
+9. Effects
+
+shadow / shadow-md / shadow-lg		Box shadow (elevation).
+opacity-50				Transparency.
+hover:bg-blue-700			Changes background color on hover.
+transition duration-300			Smooth animations.
+
+
+10. Positioning
+
+relative / absolute / fixed		Set element positioning.
+top-0 / right-0 / bottom-0		Set position offsets.
+z-10					Layer stacking order (z-index).
+
+
+11. Other Useful Utilities
+
+cursor-pointer				Makes mouse cursor a pointer.
+overflow-hidden / overflow-scroll	Controls overflow behavior.
+select-none				Disable text selection.
+
+

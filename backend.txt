@@ -1,0 +1,160 @@
+Backend Folder : (always add .js add end of filename whenever its imported)
+
+-> npm init -y 
+(creates package.json with default values)
+
+-> npm i cors dotenv express jsonwebtoken mongoose multer nodemon cloudinary bcrypt svix
+1. cors	         : allows frontend to make api request across different origin (Cross-Origin Resource Sharing) 
+2. dotenv        : to manage environment variables using .env file
+3. express       : to create RESTful APIs and handle server logic
+4. jsonwwebtoken : to manage User Authentication by creating and verifying tokens 
+5. mongoose	 : to interact with MongoDB (manage schema, models, and queries)
+6. multer	 : to handle file uploads (we use it to get files and upload it to cloudinary using api)
+7. nodemon       : to auto restart backend whenever we change code
+8. couldinary    : to upload, store, and manage images (company logos n resume)
+9. bcrypt        : encrypt password n store in database
+10. svix 	 : to manage clerk authentication (It helps developers send, manage, and verify webhooks easily and securely)
+		   ( A user signs up via Clerk (frontend with React).
+		     Clerk triggers an event like user.created.
+		     That event is sent via a webhook to your server (Node.js).
+		     This webhook is delivered through Svix. )
+
+
+-> add "type" : "module" in package.json (to use import statements instead of using require)
+-> remove test and add "server" : "nodemon server.js" in script of pkg.json 
+
+-> npm run server : to run the project
+
+-> Postman - all in one API platform for building and working with API 
+create get req : http://localhost:5000 and send (you get response as 'API Working')
+
+-> create folders inside backend 
+config		- stores configuration code ( mongodb, Cloudinary ) 
+controllers	- stores main logic to handle request n runs when routes are hit ( userController.js )
+middleware	- stores function that runs before controller ( checkAuth.js )
+models		- defines database Schema n interact with database ( user.js )
+routes		- define routes n connects them to controller ( userRoutes.js )
+utils 		- stores reusable functions n utilities ( JWT token )
+
+
+MVC  :
+
+1) model	- database layer (database n business logic) (ex - user model)
+2) view	 	- presentation layer (handles what user sees) (ex - res.json)
+3) Controller	- logic layer (receives request ask models to get data and sends back the response/view)
+		user -> route -> controller -> model -> controller -> response/view -> user
+		(user request /user , controller calls user.find() model , controller sends response as json (which is view to users)
+
+API :
+
+1) application programming interface
+2) set of rule and protocols that defines how software should interact with each other 
+3) like a messenger that lets two system software communicate with each other
+4) ex: weather app, it calls api, api sends back the data, the app shows you temperature
+5) it allows frontend to connect with backend
+6) frontend sends http request (post,get,put,delete) to the endpoints (urls, routes) and server respond with data (in json format)
+	client ->(req) API -> server -> database
+       	       <-(res)
+
+MONGODB :
+
+1) Open Chrome search 'MONGODB ATLAS' n click try free n sign up (email n Sejalm@123)
+2) Click on new project, give project name, next, click on create project
+3) Create cluster, select M0, create deployment, add username n password (sejalmengji & sejal123) , create database user
+4) Choose connection string : driver, done
+5) Go to clusters and click on connect : copy connection string  (to connect mongoose pkg with mongoDB)
+6) Create .env file in backend folder : MONGODB_URI = "paste" , replace <db_password> with 'sejal123', remove / after mongodb.net/__
+7) Click on network access : edit ip address, allow access from anywhere, confirm (to access the database from any ip address)
+
+
+
+
+(1) create Server.js  
+-> import express, cors, dotenv/config
+-> Initialize express   : const app = express()
+-> Port		        : const PORT = process.env.PORT || 5000
+-> Middleware		: app.use(cors())
+			  app.use(express.json())
+-> Routes 		: app.get('/',(req,res) => res.send("API Working"))
+-> Start Server 	: app.listen(PORT,()=>{ console.log(`Server is running on port ${PORT}`); })
+
+(2) create mongodb.js in config
+-> import mongoose 
+-> create async arrow fn : const connectDB = async () => {  
+1. mongoose.connection.on('connected',()=>{console.log('mongoDb connected')} : Whenever mongodb is connected this gets executed
+2. await mongoose.connect(`${process.env.MONGODB_URI}/JobNest`)
+-> export default connectDB
+-> In server.js : await connectDB() (below port)
+
+(3) create User.js in Models
+-> import mongoose from "mongoose"
+-> create userSchema = new mongoose.Schema ({_id:{type:String,required:true}, name, email, resume, image)} 
+-> create User = mongoose.model('User',userSchema) 
+-> export default User
+
+(4) create webhooks.js in controllers
+-> In .env file : CLERK_WEBHOOK_SECRET = ""
+-> import {Webhook} from 'svix'
+-> import User from '../models/User.js'
+// API fn to manage clerk user with database - verifies webhook req from clerk using svix
+-> export const clerkWebhooks = async (req,res) => { 
+	try{
+		// create svix instance with clerk webhook secret
+		const whook = new Webhook (process.env.CLERK_WEBHOOK_SECRET)
+		// Verifying Headers
+		await whook.verify(JSON.stringify(req.body),{
+            		'svix-id': req.headers['svix-id'],
+            		'svix-timestamp' : req.headers['svix-timestamp'],
+            		'svix-signature' : req.headers['svix-signature']   
+        	})
+       		// Getting Data from request body
+        	const { data, type } = req.body
+
+		// Switch Cases for different events - based on events it adds user to mongoDB, update user n delete user
+       		 switch (type) {
+                 	case 'user.created':{
+			    const userData = {
+                   		 _id: data.id,
+                    		email: data.email_addresses[0].email_address,
+                    		name: data.first_name + " " + data.last_name,
+                    		resume: ''
+                	    }
+                	    // to save data in database
+                	    await User.create(userData)
+                	    res.json({})
+               		    break;
+              		}
+            		case 'user.updated':{
+			    const userData = {
+                              	email: data.email_addresses[0].email_address,
+                    		name: data.first_name + " " + data.last_name,
+                	    }
+                      	    await User.findByIdAndUpdate(data.id, userData)
+                	    res.json({})
+               		    break;
+
+            		}
+            		case 'user.deleted':{
+			    await User.findByIdAndDelete(data.id)
+               		    res.json({})
+                	    break;
+           		}        
+          		default:
+                	  break;
+        	}
+	}
+	catch(error){
+		console.log(error.message);
+        	res.json({success:false, message:'Webhooks Error'})
+	}
+-> Server.js (Routes) : app.post('/webhooks',clerkWebhooks)
+ 
+
+(5) vercel.json :
+-> deploy - putting your project on a live server so other people can access it online.
+-> cloud platform that lets you deploy your project
+1) go to github.com/greatstackdev, click on notes n copy backend code and paste it here
+
+(6) Push on GitHub
+-> create .gitignore file in jobnest folder : add node_module
+-> click on 3rd icon on left sidebar of vs code : initialize repository, add message 'First Commit' and click on Commit, click Publish Branch

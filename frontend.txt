@@ -1,0 +1,438 @@
+Create frontend folder
+
+1) npm create vite@latest -> project name (frontend, react, javascript) 
+npm - node package manager to install js packages/libraries and manage dependencies 
+    - no need manually download libraries, manages version, frameworks like react, vite, express, tailwind are available
+    - npm init (create pkg.json - stores matadata about project like name, dependencies, version), 
+      npm install (install dependencies listed in pkg.json), npm install package(install specific package), npm uninstall package
+create - to start template
+vite@latest - specifies vite project n latest means using most up-to-date version 
+
+2) cd frontend 
+change directory
+
+3) npm install 
+install all dependencies listed in pkg.json file n stores in node_module folder n install pkg-lock.json which locks exact version used.
+
+4) npm install react-router-dom react-toastify 
+react-router-dom : to handle routing in react app, lets you create pages n navigate btn them w/o reloading entire webpage (ex: routes, route, link )
+react-toastify : to show pop up msg like error warning success
+
+npm i quill : to add rich text editor for formatting n content editing
+
+5) npm run dev : to run the project
+
+6) clear ( app.css, index.css and app.jsx from src folder ) 
+
+7) App.jsx -> use snippet -> rafce (extension - ES7 React/Redux/GraphQl/React-Native Snippet)
+
+8) Open index.html -> Update title to JobNest
+
+9) delete react.svg from assests in src and store all svg files
+
+10) create assets.js	-> import all image files with their name n path (so later on we dont write path in react components) 
+(in src folder) 	-> export const assets = { all img files name} (all images are grouped into one single object called assets so can 				be imported into any file)
+			-> export const Jobcategories = [ categories ] (array - static list or dropdown menu or filter)
+			-> export const JobLocations = [ locations ] (array - static list or dropdown menu or filter)
+			-> export const manageJobsData = {id, title, data, location, applicants} (Sample data for admin to manage job post)
+			-> export const jobsApplied = {company, title, location, date, status, logo} (Sample data for user profile page 				applied job list )
+			-> export const viewApplicationsPageData = {id, name, jobTitle, location, imgSrc} (list people who applied)
+			-> export const jobsData = [{id, title, location, level, companyId, salary, date, category}] (main job listing data)
+
+11) tailwind		-> npm install tailwindcss @tailwindcss/vite
+			-> copy codes (import tailwindcss from '@tailwindcss/vite') (plugins:[react(), tailwindcss()],) into vite.config.js
+			-> @import "tailwindcss"; into index.css
+
+12) Carousel 		-> shadcn/ui (provides predesigned components which we can cp n paste in our apps) 
+			-> docs -> installation -> vite -> create jsconfig.json file and paste ({"compilerOptions": {// ..."baseUrl": 				".","paths": {"@/*": ["./src/*"]}// ...}})
+			-> edit vite.config.js - import path from "path" and resolve: {alias: {"@": path.resolve(__dirname, "./src"),},},
+			-> npx shadcn@latest init
+		  	-> start adding components - npx shadcn@latest add carousel
+			-> npm i embla-carousel-autoplay
+
+13) create folders in src -> (assets, pages, components, context)
+1. pages
+2. components (reusable ui elements like navbar, footer, jobCard,..) 
+3. context (stores react context - to share data globally across your entire component tree without passing props manually at every level )
+(in react data is passed from parent component to child components using props)
+(prop drilling - if only grandchild wants data you have to pass it through parent, child as well (each level) which becomes messy)
+(react context is soln to avoid prop drilling ie sharing of data without using props)
+(create context, wrap component with context provider and then any child can use useContext to access data without props)
+(global state - data that is needed by multiple components which should stay same throughout entire app)
+
+State Variables - variables that manage dynamic data and when they change UI automatically changes and it re-renders new state
+		- ex : we use useState hook to define them, button with onClick property increases count using setCount
+
+<></> - We use fragment istead of div when we want to group multiple elements without adding extra nodes to the DOM.
+
+
+Hooks	- functions that let you use react features in a functional component [const hero = () => {}]
+	- they can be reused and shared. They make code shorter, cleaner, easier.
+	- useState    - adds and manage state to function
+	- useEffect   - runs side effect (api calls, timers)
+	- useContext  - access context data from context provider
+	- useCallback - memoize function
+	- useRef      - refer to DOM elements
+	- useMemo     - optimize performance
+-> import {useState} from react
+-> Call it inside function - const [count, setCount] = useState(0);
+-> use the state - <button onClick= {() => setCount(count+1)}> Count : {count} </button>
+
+14) in pages create files -> Home, Applications, ApplyJob.jsx -> rafce
+
+15) main.jsx (entry point where app gets rendered into actual webpage - bootstraps app into browser)
+-> remove StrictMode n add BrowserRouter n import {BrowserRouter} from 'react-router-dom'
+( strictMode - renders twice )
+( BrowserRouter - provides routing or manage url navigation )
+
+16) app.jsx (apps navigation hub -  routes, layouts controller)
+-> add <Routes></Routes> inside div  and then import {Routes} from 'react-router-dom'
+-> <Route path='/' element={<Home />}/> and import Home from './pages/Home' (when url is / render home component)
+-> <Route path='/apply-job/:id' element={<ApplyJob />}/>and import ApplyJob from './pages/ApplyJob'
+-> <Route path='/applications' element={<Applications />}/>and import Applications from './pages/Applications'
+(routes helps to render components based on url path)
+
+17) create AppContext.jsx in context 
+(manages global data sharing, to provide global state to all components like user login, theme, cart items,..)
+-> import {createContext} from "react";
+-> export const AppContext = createContext() (creation of context object)
+-> export const AppContextProvider = (props) => { (creation of provider component)
+	const value = {
+	}
+	return (<AppContext.Provider value={value}>
+		{props.children}
+	</AppContext.Provider>
+	)
+}
+-> Export deafult AppContextProvider 
+
+18) main.jsx
+-> inside browserRouter add <AppContextProvider></AppContextProvider> and import {AppContextProvider} from './context/AppContext.jsx'
+-> keep <App/> inside at most center <browserRouter> <AppContextProvider> <App/> </AppContextProvider> </browserRouter>
+(wrap app inside appContextprovider so all child components can access global state using useContext)
+
+19) Figma - https://www.figma.com/design/D6tXxRWuiZho7Mj3LdZ6cF/Job-Portal-Design-File?node-id=0-1&p=f
+
+20) Navbar.jsx - components folder
+-> rafce
+-> inside div (classname = shawdow, py-4) 
+- div (classname = flex gap-4 max-sm:text-xs) 
+1. <img src={assets.logo} alt="" className='w-28 h-17'/>
+2. div (flex gap-4 max-sm:text-xs)- 2 button tags for recruiter login and User Login
+-> in Home.jsx - mount <Navbar />
+
+
+21) Clerk (user authentication and management platform)
+-> search clerk authentication on google n create account 
+-> create new application n name it JobNest then select react then you have steps to integrate clerk in react project
+-> npm install @clerk/clerk-react 
+-> create n add this to .env file : VITE_CLERK_PUBLISHABLE_KEY=pk_test_bXV0dWFsLWNyYXlmaXNoLTc2LmNsZXJrLmFjY291bnRzLmRldiQ
+-> Import your Publishable Key in main.jsx : 
+1. const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+					     if (!PUBLISHABLE_KEY) {
+  						throw new Error("Missing Publishable Key")
+				 	     }
+2. wrap entire app inside clerkprovider : <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"><BR><CP><App /></CP></BR></ClerkProvider>
+3. import { ClerkProvider } from '@clerk/clerk-react'
+-> Go to configure and enable name and save (user can change their name)
+
+
+22) Navbar.jsx - 
+(to display signIn pop up when clicked on user login)
+-> import {useClerk, useUser, userButton} from '@clerk/clerk-react'
+(UseClerk(): Gives you Clerk methods, like openSignIn() to open the SignIn modal.
+useUser(): Gives you details about the currently signed-in user 
+UserButton: if you want to show user profile/avatar, optional)
+-> before return in navbar function - const { openSignIn } = useClerk()  // openSignIn fn triggers signIn pop up manually
+-> add onClick property in user login button - onClick={e => openSignIn()}  
+-> After image tag (if user exits then show its profile if not then display buttons to log in):
+{
+          user
+          ? <div className='flex items-center gap-3'>
+            <Link to={'/applications'}>Applied Jobs</Link>
+            <p> | </p>
+            <p>{user.firstName + " " + user.lastName}</p>
+            <UserButton/>
+          </div>
+          : <div className='flex gap-4 max-sm:text-xs '>
+          <button className='text-gray-600'>Recruiter Login</button>
+          <button onClick={e => openSignIn()} className='bg-emerald-500 text-white px-6 sm:px-9 py-2 rounded-full'>User Login</button>
+        </div>
+}
+(Logic for when clicked on logo it will navigate to home page)
+->   const navigate = useNavigate();
+-> in img tag -> onClick={() => navigate('/')} and classname = cursor-pointer
+
+
+23) Hero.jsx in components
+rafce and mount this in home page
+create companyLogos array containing images of logos imported from assets
+1. div (header) 
+-> heading
+-> paragraph
+-> div - 1) div -search img n input for profile 2) div - location img n input for location 3) button - search
+2. Carousel/ Slider ( allows the user to slide or scroll images content horizontally)
+-> go to shadcn/ui andcopy n past code of carousel you want 
+-> import carousal, carousalContent, carouselItem 
+-> remove everything n keep this only : <Carousel className="w-full py-10"> <CarouselContent> Add Code </CarouselContent> </Carousel>
+-> import Autoplay from "embla-carousel-autoplay"
+
+AppContext.jsx 
+(logic for when clicked on input field the data will be saved in a state variable that we will use to filter job list)
+-> create two state variables - const [searchFilter, setSearchFilter] [isSearched, setIsSearched] and declare them by title, location and second with false Boolean data and finally add it to the value object
+
+Hero.jsx
+// stores search criteria and toggles whether search is active
+-> const {setSearchFilter, setIsSearched} = useContext(AppContext); 
+// to directly access input value from dom
+-> const titleRef = useRef(null); 
+-> const locationRef = useRef(null);
+-> link this variables with input fields - ref={titleRef} and ref={locationRef}
+// state variable to toggle cross icon visibility
+-> const [showClear, setShowClear] = useState(false);
+// Search Handler
+-> const onSearch = () => {
+    const title = titleRef.current.value.trim();
+    const location = locationRef.current.value.trim();
+
+    setSearchFilter({ title, location });
+    setIsSearched(true);
+
+    if (title || location) {
+        setShowClear(true);
+    }
+};
+-> add this to button so when clicked on button this function will get executed - onClicked = {onSearch}
+// Function to clear input fields and hide cross
+-> const onClear = () => {
+        // reset both input fields
+        titleRef.current.value = "";
+        locationRef.current.value = "";
+        setSearchFilter({ title: "", location: "" });
+        setIsSearched(false);
+        setShowClear(false);
+    };
+-> {showClear && ( <img onClick={onClear} className='h-3 sm:h-3 cursor-pointer' src={assets.cross_icon} alt="" /> )}
+
+25) JobListing.jsx
+-> rafce and mount this in home page
+-> const [selectedcategory, setSelectedcategory] = useState("");
+    const [selectedlocation, setSelectedlocation] = useState(""); 
+-> div which has div following 3 major components
+1. heading - latest jobs 
+2. filters - div ( select tag for filter by categories , select tag for filter by location dropdown, button for clear filter)
+{!selectedcategory && (<option value='' hidden> Filter by Category </option> )} // if selectedcategory is false it display this option
+{
+JobCategories.map((category, index) => (  // map JobCategories array from assets.js file
+   <option key={index} value={category}>
+      {category}
+   </option>
+  ))
+}
+3. Cards 
+-> div for outer 
+-> render filtered jobs using filteredJobs.map((job,index)) => <Jobcard key={index} job={job}/>} 
+-> .slice((currentPage-1)*6,currentPage*6)
+
+AppContext.jsx
+(Instead of getting job data from jobsData, add it to context and fetch it from state variable )
+-> const [jobs, setJobs] = useState([]); // initialise useState with empty array
+-> const fetchJobs = async () => { setJobs(jobsData) }
+-> useEffect(() => {fetchJobs()}, [])
+-> const value={ searchFilter, setSearchFilter, isSearched, setIsSearched, jobs, setJobs, }
+
+JobListing.jsx
+-> const {jobs} = useContext(AppContext);
+
+26) JobCard.jsx in components
+-> rafce and div
+1. 1st div - has heading n div for img of companies , 2nd div - for MapPin n span 
+2. para 
+3. div - 2 buttons (apply jobs and like)
+( when clicked on apply now it will render us to apply-job page )
+-> const navigate = useNavigate()
+-> on apply now button - onClick={() => {navigate(`/apply-job/${job._id}`); scrollTo(0,0)}}
+
+
+27) Pagination in JobListing.jsx
+-> const [currentPage, setCurrentPage] = useState(1); // page starts from 1
+-> { if FilteredJobs.length > 0 (then display div - 
+1. anchor tag - img tag for left arrow with onClick property, 
+2. array object - anchor tag containing button with onClick properties when on clicked will change the card page 
+3. anchor tag - w img tag for right arrow }
+
+
+28) Footer.jsx in component
+-> rafce and mount it in home page
+-> div -- 1. img for logo 2. para 3. div - 3 imgs fb, insta, twitter
+
+
+29) Logic when applied filter or searched on job postings
+-> const [filteredJobs, setFilteredJobs] = useState(jobs);
+-> const {jobs, searchFilter} = useContext()
+-> useEffect(() => {
+      const matchesCategory = job => selectedcategory.length === 0 || selectedcategory.includes(job.category)
+      const matchesLocation = job => selectedlocation.length === 0 || selectedlocation.includes(job.location)
+      const matchesTitle = job => searchFilter.title === "" || job.title.toLowerCase().includes(searchFilter.title.toLowerCase())
+      const matchesSearchLocation = job => searchFilter.location === "" || job.location.toLowerCase().includes(searchFilter.location.toLowerCase())
+      
+      const newFilteredJobs = jobs.slice().reverse().filter(
+        job => matchesCategory(job) && matchesLocation(job) && matchesTitle(job) && matchesSearchLocation(job)
+      )
+
+      setFilteredJobs(newFilteredJobs)
+      setCurrentPage(1)
+    }, [jobs,selectedcategory,selectedlocation,searchFilter])
+
+
+30) ApplyJob.jsx
+// To get the job id according to which we will find job data and store it in a state variable 
+-> const { id } = useParams()
+  const [jobData, setJobData] = useState(null);
+  const {jobs} = useContext(AppContext)
+  // fetch handler
+  const fetchJob = async () => {
+    const data = jobs.filter(job => job._id === id)
+    if (data.length !== 0) {
+      setJobData(data[0])
+      // console.log(data[0]) // to check is data get rendered or not
+    }
+  }
+  useEffect(() => {
+    if (jobs.length > 0) {
+      fetchJob()          
+    }
+  }, [id,jobs]) // whenever id changes then this function is called
+-> remove div and make it <> </> 
+-> <Navbar />
+-> div which has div
+A. div  -> 1. div - two div - 1. h1 tag 2. div - 3 span tag with img and names
+	-> 2. div - button for apply now
+B. div  -> 1. div - h2 tag and div for description
+	-> 2. div - h2 tag and jobcard
+
+
+31) Loading.jsx in component
+->  <div className='min-h-screen flex items-center justify-center'>
+      <div className='w-20 h-20 border-4 border-gray-300 border-t-4 border-t-blue-400 rounded-full animate-spin'></div>
+    </div>
+-> add <Loading/> in ApplyJob.jsx in 2nd div
+
+Index.css
+-> add css properties
+
+
+32) Applications.jsx
+-> rafce and make div as fragment <> </>
+-> add navbar and footer
+-> div which has
+1. h2 tag
+2. div - table - thead tr th, tbody if job available show tr td else null
+
+
+33) RecruiterLogin.jsx in components
+-> rafce and open app.jsx and mount it above routes
+-> 
+{/* to go to home page when clicked on cross icon */}
+  const { setShowRecruiterLogin } = useContext(AppContext);
+
+  const [state, setState] = useState('Login');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [image, setImage] = useState(false);
+  const [isNextDataSumbmited, setIsNextDataSumbmited] = useState(false);
+
+AppContext.jsx
+-> const [showRecruiterLogin, setShowRecruiterLogin] = useState(false);
+-> add it in value object to access in any component
+
+App.jsx 
+(if showRecruiterLogin state variable is true then only we will show <RecruiterLogin /> component)
+-> const {showRecruiterLogin} = useContext(AppContext);
+-> { showRecruiterLogin &&  <RecruiterLogin /> }
+
+navbar.jsx
+(when clicked on recruiter login it will show pop up)
+-> const {setShowRecruiterLogin} = useContext(AppContext);
+-> apply onclick property on recruiter login button : onClick={e => setShowRecruiterLogin(true)}
+
+RecruiterLogin.jsx
+-> div which has form
+1. image - cross icon image
+2. h1 tag
+3. para with terary operator
+4. ternary operator - if sign up then show its fragment else show log in fragment - 
+Sign Up fragment    - div - 1. label which has img n input 2. para
+Log in fragment     - 3 div - image and input  
+5. para - forgot password
+6. button - logon or signup
+7. para - 2 tags inside ternary operator for don't have an account and already have an account
+( classname is responsible for pop up effect - top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center )
+( if state is not login then show name div : {state !== 'Login' && (div)} )
+
+// when clicked on create button of sign up the isTextDataSumbmited becomes true - when the data is submitted 
+-> const onSubmitHandler = async (e) => {
+    {/* prevent page from reloading */}
+    e.preventDefault() 
+    if(state === 'Sign Up' && !isTextDataSumbmited){
+      setIsTextDataSumbmited(true)
+-> add type = submit on button
+-> add to form tag - onSubmit={onSubmitHandler}
+
+// When login page is opened we can't scroll the webpage
+-> useEffect(() => {
+    document.body.style.overflow = 'hidden'
+  
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [])
+  
+
+
+34) Dashboard, ManageJobs, ViewApplications, AddJob in pages
+App.jsx :
+-> <Route path=' /dashboard' element = {<Dashboard/>}>
+          <Route path='add-job' element = {<AddJob/>} />
+          <Route path='manage-jobs' element = {<ManageJobs/>} />
+          <Route path='view-applications' element = {<ViewApplications/>} />
+   </Route>
+-> to rendered nested routes use <Outlet /> in dashboard pages
+
+
+35) dashboard.jsx
+-> div
+1. Navbar 
+-> div has div - img , div (p tag, div -img for logo and div (ul - li for logout))
+2. Div
+-> left side -> div - ul - 3 navlinks conataining img and para
+-> div - Outlet 
+-> right side ->
+->
+
+36) AddJob.jsx in pages
+-> const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [location, setLocation] = useState('Bangalore');
+    const [category, setCategory] = useState('Full Stack Developer');
+    const [salary, setSalary] = useState(0);
+-> form 
+1. div - p tag, input (title)
+2. div - p tag, textarea (description)
+3. div -  a) div - p tag, select tag (category) div    b) div - p tag, select tag (location)
+4. div - p tag, input (salary)
+5. button - add
+
+37) ViewApplications.jsx
+-> div which hasdiv with table
+1. thead - tr - 6 th (#, user name, job title, location, resume, action)
+2. tbody - tr - 6 td (index, name, title, location, anchor tag for resume w img, div with 1.button 2. div for 2 button accept n reject
+
+38) ManageJobs.jsx
+-> div
+1. div - table 
+- thead - tr - 6 th (#, job title, date, location, applicants, visible)
+- tbody - tr - 6 td 
+2. div - button
+
