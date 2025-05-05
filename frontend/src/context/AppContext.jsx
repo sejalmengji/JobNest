@@ -24,7 +24,7 @@ export const AppContextProvider =(props) =>{
 
     // Value Object - so this state variable can be accessed by any component of app
     const value={
-        searchFilter, setSearchFilter, isSearched, setIsSearched, jobs, setJobs, showRecruiterLogin, setShowRecruiterLogin, showRecruiterLogin, setShowRecruiterLogin
+        searchFilter, setSearchFilter, isSearched, setIsSearched, jobs, setJobs, showRecruiterLogin, setShowRecruiterLogin,
     }
     
     return (<AppContext.Provider value={value}>

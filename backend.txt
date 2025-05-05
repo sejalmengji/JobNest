@@ -150,11 +150,27 @@ MONGODB :
 -> Server.js (Routes) : app.post('/webhooks',clerkWebhooks)
  
 
-(5) vercel.json :
+(5) Push on GitHub
+-> create .gitignore file in jobnest folder : add node_module
+-> push project to github
+
+(6) vercel.json :
 -> deploy - putting your project on a live server so other people can access it online.
 -> cloud platform that lets you deploy your project
-1) go to github.com/greatstackdev, click on notes n copy backend code and paste it here
+1) github.com/greatstackdev -> click on notes n copy backend code and paste it here
+2) vercel.com : 
+login, add new, select project and import, name job-nest-server, select backend as root directory, add .env files variables, deploy, continue to dashboard, copy domains link (https://job-nest-server-one.vercel.app/)
+3) clerk.com : 
+dashboard -> configure -> webhook -> add endpoints -> paste copied link () and add /webhooks at last of link , sroll down and select user event, create, copy signing secret : whsec_uJaZtic6O9em0TGru83jqF6k+XXnqeDL
+4) open .env file : 
+paste inside CLERK_WEBHOOK_SECRET = "whsec_uJaZtic6O9em0TGru83jqF6k+XXnqeDL"
+5) vercel.com : 
+-> setting, env variables add CLERK_WEBHOOK_SECRET = "whsec_uJaZtic6O9em0TGru83jqF6k+XXnqeDL" and save
+-> deplyoments -> ... -> create deplyoment -> select main -> create deplyoment 
 
-(6) Push on GitHub
--> create .gitignore file in jobnest folder : add node_module
--> click on 3rd icon on left sidebar of vs code : initialize repository, add message 'First Commit' and click on Commit, click Publish Branch
+
+(7) Refersh frontend project and delete user login account and again login w google
+
+(8) Open MongoDB compass
+
+

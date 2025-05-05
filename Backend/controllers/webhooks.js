@@ -1,5 +1,5 @@
 import {Webhook} from 'svix'
-import User from '../models/User/js'
+import User from '../models/User.js'
 
 // API function to manage clerk user with database - verifies webhook req from clerk using svix
 export const clerkWebhooks = async (req,res) => {
@@ -9,14 +9,16 @@ export const clerkWebhooks = async (req,res) => {
         const whook = new Webhook (process.env.CLERK_WEBHOOK_SECRET)
 
         // Verifying Header
-        await whook.verify(JSON.stringify(req.body),{
+        await whook.verify(req.body,{
             'svix-id': req.headers['svix-id'],
             'svix-timestamp' : req.headers['svix-timestamp'],
             'svix-signature' : req.headers['svix-signature']   
         })
 
         // Getting Data from request body
-        const { data, type } = req.body
+        const payloadString = req.body.toString('utf8')
+        const { data, type } = JSON.parse(payloadString)
+
 
         // Switch Cases for different events - based on events it adds user to mongoDB, update user n delete user
         switch (type) {
